@@ -1,0 +1,29 @@
+{
+  "name": "larlf",
+  "version": "1.0.2",
+  "description": "Larlf's JavaScript lib",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/larlf/larlf.js.git"
+  },
+  "devDependencies": {
+    "@types/crc": "^3.4.0",
+    "@types/fs-extra": "^8.0.0",
+    "@types/xlsx": "0.0.36"
+  },
+  "dependencies": {
+    "crc": "^3.5.0",
+    "fs-extra": "^8.1.0",
+    "xlsx": "^0.14.4"
+  },
+  "author": "Larlf.Wang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/larlf/larlf.js/issues"
+  },
+  "homepage": "https://github.com/larlf/larlf.js#readme"
+}
