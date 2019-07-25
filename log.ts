@@ -39,6 +39,13 @@ let Log = {
         _log("[Info] " + msg, stack[3].trim(), "info");
     },
 
+    warn: function (msg: string | any)
+    {
+        let error = __error();
+        let stack = error.stack.split("\n");
+        console.log(("[Warn] " + msg).magenta + " <= " + stack[3].trim());
+    },
+
     error: function (msg: string | any, value?: any)
     {
         let error = __error();

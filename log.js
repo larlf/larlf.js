@@ -28,6 +28,11 @@ let Log = {
         let stack = error.stack.split("\n");
         _log("[Info] " + msg, stack[3].trim(), "info");
     },
+    warn: function (msg) {
+        let error = __error();
+        let stack = error.stack.split("\n");
+        console.log(("[Warn] " + msg).magenta + " <= " + stack[3].trim());
+    },
     error: function (msg, value) {
         let error = __error();
         let stack = error.stack.split("\n");
