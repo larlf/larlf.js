@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs = require("fs");
 const iconv_lite = require("iconv-lite");
 const log_1 = require("./log");
 function format(str, ...argv) {
@@ -32,12 +33,6 @@ function replaceBlock(text, startReg, endReg, data, indent) {
             dataLines[i] = data[i];
         }
     }
-    //处理indent
-    if (indent) {
-        for (let i in dataLines) {
-            dataLines[i] = indent + dataLines[i];
-        }
-    }
     //查找开始和结束的位置
     for (let i = 0; i < lines.length; ++i) {
         if (startLine < 0 && lines[i].match(startReg))
@@ -47,6 +42,18 @@ function replaceBlock(text, startReg, endReg, data, indent) {
     }
     //替换内容
     if (startLine >= 0 && endLine >= 0 && endLine > startLine) {
+        //如果没有设置缩进，就用第一个标签的缩进
+        if (!indent) {
+            let startLineText = lines[startLine];
+            let startLineIndentPos = startLineText.indexOf(startLineText.trim());
+            indent = startLineText.substr(0, startLineIndentPos);
+        }
+        //处理indent
+        if (indent) {
+            for (let i in dataLines) {
+                dataLines[i] = indent + dataLines[i];
+            }
+        }
         lines.splice(startLine + 1, endLine - startLine - 1, dataLines.join("\n"));
     }
     else
@@ -54,6 +61,28 @@ function replaceBlock(text, startReg, endReg, data, indent) {
     return lines.join("\n");
 }
 ;
+/**
+ * 替换文件中的文本块
+ * @param filename 文件名称
+ * @param key 关键字，开始的地方会在前面加Start，结束会加End
+ * @param data 要替换成的数据
+ * @param indent 缩进，为null的时候自动处理
+ * @param notRewrite 不重写文件，只是把结果返回
+ */
+function replaceFileBlock(filename, key, data, indent, notRewrite) {
+    if (!fs.existsSync(filename)) {
+        log_1.default.error("Cannot find file : " + filename);
+        return null;
+    }
+    let text = fs.readFileSync(filename).toString();
+    text = replaceBlock(text, new RegExp(key + "\s?Start"), new RegExp(key + "\s?End"), data, indent);
+    //写入文件
+    if (!notRewrite) {
+        log_1.default.debug("Write : " + filename);
+        fs.writeFileSync(filename, text);
+    }
+    return text;
+}
 /**
  * GBK转码成UTF8
  * 通常需要传进来Buffer才行，因为String已经被处理过了
@@ -69,5 +98,6 @@ exports.default = {
     format,
     templet,
     replaceBlock,
+    replaceFileBlock,
     gbk2utf8
 };
