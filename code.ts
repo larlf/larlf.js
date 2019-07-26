@@ -1,9 +1,10 @@
 import * as fs from 'fs';
-import log from "./log";
+import * as _log from "./log";
 import * as text from "./text";
 import * as SourceMapSupport from 'source-map-support';
-import Log from './log';
 import * as crc from 'crc';
+
+let log = _log.Logger;
 
 SourceMapSupport.install();
 
@@ -113,7 +114,7 @@ class DataObjTask
 		this.filename = filename;
 		if (!fs.existsSync)
 		{
-			Log.error("Cannot find entities define : " + filename);
+			log.error("Cannot find entities define : " + filename);
 		}
 		else
 		{

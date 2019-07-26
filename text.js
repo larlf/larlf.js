@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
-const log_1 = require("./log");
+const _log = require("./log");
+let log = _log.Logger;
 function format(str, ...argv) {
     for (let i = 0; i < argv.length; ++i) {
         let reg = new RegExp("\\{" + (i) + "\\}", "g");
@@ -58,7 +59,7 @@ function replaceBlock(text, startReg, endReg, data, indent) {
         lines.splice(startLine + 1, endLine - startLine - 1, dataLines.join("\n"));
     }
     else
-        log_1.default.error("Cannot find replace block : (" + startLine + "," + endLine + ") with rules : " + startReg + "," + endReg);
+        log.error("Cannot find replace block : (" + startLine + "," + endLine + ") with rules : " + startReg + "," + endReg);
     return lines.join("\n");
 }
 exports.replaceBlock = replaceBlock;
@@ -73,14 +74,14 @@ exports.replaceBlock = replaceBlock;
  */
 function replaceFileBlock(filename, key, data, indent, notRewrite) {
     if (!fs.existsSync(filename)) {
-        log_1.default.error("Cannot find file : " + filename);
+        log.error("Cannot find file : " + filename);
         return null;
     }
     let text = fs.readFileSync(filename).toString();
     text = replaceBlock(text, new RegExp(key + "\s?Start"), new RegExp(key + "\s?End"), data, indent);
     //写入文件
     if (!notRewrite) {
-        log_1.default.debug("Write : " + filename);
+        log.debug("Write : " + filename);
         fs.writeFileSync(filename, text);
     }
     return text;

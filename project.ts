@@ -3,7 +3,9 @@ import * as path from "path";
 import * as os from "os";
 import * as child_process from "child_process";
 import * as iconv_lite from "iconv-lite";
-import log from "./log";
+import * as _log from "./log";
+
+let log = _log.Logger;
 
 function execFile(filename: string, param?: string[]): string
 {

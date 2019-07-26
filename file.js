@@ -4,11 +4,12 @@ const fs = require("fs");
 const path = require("path");
 const glob = require("glob");
 const fs_extra = require("fs-extra");
-const log_1 = require("./log");
+const _log = require("./log");
+let log = _log.Logger;
 //复制文件
 function copyFile(srcFile, dstFile) {
     if (!fs.existsSync(srcFile)) {
-        log_1.default.error("Cannot find src file : " + srcFile);
+        log.error("Cannot find src file : " + srcFile);
         return false;
     }
     let srcStat = fs.statSync(srcFile);
@@ -27,12 +28,12 @@ function copyFile(srcFile, dstFile) {
             if (!fs.existsSync(dstPath))
                 fs_extra.mkdirsSync(dstPath);
             if (!fs.existsSync(dstPath)) {
-                log_1.default.error("Cannot create directory : " + dstPath);
+                log.error("Cannot create directory : " + dstPath);
                 return false;
             }
         }
         //复制文件
-        log_1.default.debug("[Copy] " + srcFile + " => " + dstFile);
+        log.debug("[Copy] " + srcFile + " => " + dstFile);
         fs_extra.copySync(srcFile, dstFile, { preserveTimestamps: true });
         return true;
     }
@@ -117,7 +118,7 @@ class LinesFile {
         this.filename = filename;
         //读取文件
         if (fs.existsSync(filename)) {
-            log_1.default.debug("Load lines file : " + filename);
+            log.debug("Load lines file : " + filename);
             this.lines = fs.readFileSync(filename).toString().split("\n");
         }
         else
@@ -132,9 +133,78 @@ class LinesFile {
         for (let i = 0; i < this.lines.length; ++i) {
             let r = this.lines[i].match(reg);
             if (r && r.length && callback) {
-                this.lines[i] = callback(this.lines[i], r);
+                let str = callback(this.lines[i], r);
+                if (str !== null) {
+                    log.debug("Replace line " + (i + 1) + " in " + this.filename);
+                    log.print("From : " + this.lines[i].trim());
+                    log.print(" To  : " + str.trim());
+                    this.lines[i] = str;
+                }
             }
         }
+    }
+    /**
+     * 查找一行
+     * @param reg
+     * @param startLine
+     */
+    findLine(reg, startLine) {
+        if (!startLine)
+            startLine = 0;
+        for (let i = startLine; i < this.lines.length; ++i) {
+            let r = this.lines[i].match(reg);
+            if (r && r.length) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    /**
+     * 在指定行之后插入
+     * @param n
+     * @param str
+     */
+    insertAfter(n, str) {
+        log.debug("Insert after line " + (n + 1) + " in " + this.filename);
+        log.print(str);
+        let strs = str.split("\n");
+        for (let i = 0; i < strs.length; ++i) {
+            this.lines.splice(n + i + 1, 0, strs[i]);
+        }
+    }
+    /**
+     * 在指定行之前插入
+     * @param n
+     * @param str
+     */
+    insertBefore(n, str) {
+        log.debug("Insert before line " + (n + 1) + " in " + this.filename);
+        log.print(str);
+        let strs = str.split("\n");
+        for (let i = 0; i < strs.length; ++i) {
+            this.lines.splice(n + i, 0, strs[i]);
+        }
+    }
+    /**
+     * 替换一部分内容
+     * @param start
+     * @param count
+     * @param str
+     */
+    replace(start, count, str) {
+        log.debug("Remove " + count + " lines from line " + (start + 1) + " in " + this.filename);
+        this.lines.splice(start, count);
+        this.insertBefore(start, str);
+    }
+    /**
+     * 保存
+     */
+    save(filename) {
+        if (!filename)
+            filename = this.filename;
+        let text = this.text;
+        log.debug("Save : " + filename + ", " + text.length + " bytes");
+        fs.writeFileSync(filename, text);
     }
 }
 exports.LinesFile = LinesFile;

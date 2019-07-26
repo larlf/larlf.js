@@ -13,7 +13,7 @@ function __error()
     }
 }
 
-let Log = {
+export let Logger = {
     setLogFile(filename: string)
     {
         __logFilename = filename;
@@ -117,4 +117,3 @@ function _log(str: string, stack?: string, type?: string)
     console.log(str + (stack ? " @ " + stack : ""));
 }
 
-export default Log;

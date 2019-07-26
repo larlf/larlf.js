@@ -10,7 +10,7 @@ function __error() {
         return err;
     }
 }
-let Log = {
+exports.Logger = {
     setLogFile(filename) {
         __logFilename = filename;
     },
@@ -87,4 +87,3 @@ function _log(str, stack, type) {
     }
     console.log(str + (stack ? " @ " + stack : ""));
 }
-exports.default = Log;

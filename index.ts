@@ -1,4 +1,4 @@
-import log from "./log";
+import * as log from "./log";
 import * as text from "./text";
 import * as file from "./file";
 import project from "./project"

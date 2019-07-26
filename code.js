@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
-const log_1 = require("./log");
+const _log = require("./log");
 const text = require("./text");
 const SourceMapSupport = require("source-map-support");
-const log_2 = require("./log");
 const crc = require("crc");
+let log = _log.Logger;
 SourceMapSupport.install();
 /**
  * 用于生成OP的任务
@@ -25,7 +25,7 @@ class OPTask {
                 return;
             let v = reg.exec(line);
             if (!v) {
-                log_1.default.error("Bad op desc : " + line);
+                log.error("Bad op desc : " + line);
                 return;
             }
             else {
@@ -77,7 +77,7 @@ class DataObjTask {
         this.objs = [];
         this.filename = filename;
         if (!fs.existsSync) {
-            log_2.default.error("Cannot find entities define : " + filename);
+            log.error("Cannot find entities define : " + filename);
         }
         else {
             let text = fs.readFileSync(filename).toString();
@@ -116,7 +116,7 @@ class DataObjTask {
                 }
                 let r = classRule.exec(line);
                 if (!r) {
-                    log_1.default.error("Bad class define : " + line);
+                    log.error("Bad class define : " + line);
                     currentObj = null;
                     continue;
                 }
@@ -128,7 +128,7 @@ class DataObjTask {
             else if (line.startsWith("array<")) {
                 let r = arrayRule.exec(line);
                 if (!r) {
-                    log_1.default.error("Bad array define : " + line);
+                    log.error("Bad array define : " + line);
                     continue;
                 }
                 let type = r[1];
@@ -139,7 +139,7 @@ class DataObjTask {
             else if (line.startsWith("map<")) {
                 let r = mapRule.exec(line);
                 if (!r) {
-                    log_1.default.error("Bad map define : " + line);
+                    log.error("Bad map define : " + line);
                     continue;
                 }
                 let type = r[1];
@@ -151,7 +151,7 @@ class DataObjTask {
              {
                 let r = valueRule.exec(line);
                 if (!r) {
-                    log_1.default.error("Bad value define : " + line);
+                    log.error("Bad value define : " + line);
                     continue;
                 }
                 let type = r[1];

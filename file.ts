@@ -2,7 +2,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as glob from "glob";
 import * as fs_extra from "fs-extra";
-import log from "./log";
+import * as _log from "./log";
+
+let log = _log.Logger;
 
 //复制文件
 export function copyFile(srcFile: string, dstFile: string): boolean
@@ -170,15 +172,133 @@ export class LinesFile
 	 * @param reg 
 	 * @param callback 
 	 */
-	public findAndReplaceLine(reg: RegExp, callback: (string, RegExpMatchArray) => string)
+	public findAndReplaceLine(reg: RegExp, callback: (line: string, r: RegExpMatchArray) => string)
 	{
 		for (let i = 0; i < this.lines.length; ++i)
 		{
 			let r: RegExpMatchArray = this.lines[i].match(reg);
 			if (r && r.length && callback)
 			{
-				this.lines[i] = callback(this.lines[i], r);
+				let str = callback(this.lines[i], r);
+				if (str !== null)
+				{
+					log.debug("Replace line " + (i + 1) + " in " + this.filename);
+					log.print("From : " + this.lines[i].trim());
+					log.print(" To  : " + str.trim());
+					this.lines[i] = str;
+				}
 			}
 		}
+	}
+
+	/**
+	 * 查找一行
+	 * @param reg 
+	 * @param startLine 
+	 */
+	public findLine(reg: RegExp, startLine?: number, rule?: (line: string) => boolean): number
+	{
+		if (!startLine) startLine = 0;
+		for (let i = startLine; i < this.lines.length; ++i)
+		{
+			let r: RegExpMatchArray = this.lines[i].match(reg);
+			if (r && r.length)
+			{
+				if (rule)
+				{
+					if (rule(this.lines[i]))
+						return i;
+				}
+				else
+					return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * 反向查找一行
+	 * @param reg 
+	 * @param startLine 
+	 */
+	public findListLine(reg: RegExp, startLine?: number, rule?: (line: string) => boolean): number
+	{
+		if (!startLine || startLine < 0) startLine = this.lines.length - 1;
+		for (let i = startLine; i >= 0; --i)
+		{
+			let r: RegExpMatchArray = this.lines[i].match(reg);
+			if (r && r.length)
+			{
+				if (rule)
+				{
+					if (rule(this.lines[i]))
+						return i;
+				}
+				else
+					return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * 在指定行之后插入
+	 * @param n 
+	 * @param str 
+	 */
+	public insertAfter(n: number, str: string)
+	{
+		log.debug("Insert after line " + (n + 1) + " in " + this.filename);
+		log.print(str);
+
+		let strs = str.split("\n");
+		for (let i = 0; i < strs.length; ++i)
+		{
+			this.lines.splice(n + i + 1, 0, strs[i]);
+		}
+	}
+
+	/**
+	 * 在指定行之前插入
+	 * @param n 
+	 * @param str 
+	 */
+	public insertBefore(n: number, str: string)
+	{
+		log.debug("Insert before line " + (n + 1) + " in " + this.filename);
+		log.print(str);
+
+		let strs = str.split("\n");
+		for (let i = 0; i < strs.length; ++i)
+		{
+			this.lines.splice(n + i, 0, strs[i]);
+		}
+	}
+
+	/**
+	 * 替换一部分内容
+	 * @param start 
+	 * @param count 
+	 * @param str 
+	 */
+	public replace(start: number, count: number, str: string)
+	{
+		log.debug("Remove " + count + " lines from line " + (start + 1) + " in " + this.filename);
+		this.lines.splice(start, count);
+
+		this.insertBefore(start, str);
+	}
+
+	/**
+	 * 保存
+	 */
+	public save(filename?: string)
+	{
+		if (!filename)
+			filename = this.filename;
+
+		let text = this.text;
+		log.debug("Save : " + filename + ", " + text.length + " bytes");
+		fs.writeFileSync(filename, text);
 	}
 }

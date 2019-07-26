@@ -1,5 +1,7 @@
 import * as fs from "fs";
-import log from "./log";
+import * as _log from "./log";
+
+let log = _log.Logger;
 
 export function format(str: string, ...argv: string[]): string
 {

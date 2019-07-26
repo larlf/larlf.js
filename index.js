@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const log_1 = require("./log");
-exports.log = log_1.default;
+const log = require("./log");
+exports.log = log;
 const text = require("./text");
 exports.text = text;
 const file = require("./file");

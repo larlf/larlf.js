@@ -5,12 +5,13 @@ const path = require("path");
 const os = require("os");
 const child_process = require("child_process");
 const iconv_lite = require("iconv-lite");
-const log_1 = require("./log");
+const _log = require("./log");
+let log = _log.Logger;
 function execFile(filename, param) {
     let paramStr = param ? (" " + param.join(" ")) : "";
-    log_1.default.debug("[Execute] " + filename + paramStr);
+    log.debug("[Execute] " + filename + paramStr);
     if (!fs.existsSync(filename)) {
-        log_1.default.error("Cannot find file : " + filename);
+        log.error("Cannot find file : " + filename);
         return;
     }
     let dir = path.dirname(filename);
@@ -23,16 +24,16 @@ function execFile(filename, param) {
         return outputText.toString();
     }
     catch (ex) {
-        log_1.default.error(ex.message);
+        log.error(ex.message);
     }
     return null;
 }
 function execCmd(cmd, dir) {
     if (!dir)
         dir = process.cwd(); //如果没有传入，取执行路径
-    log_1.default.debug("[Execute] " + cmd + " at " + dir);
+    log.debug("[Execute] " + cmd + " at " + dir);
     if (!fs.existsSync(dir)) {
-        log_1.default.error("Cannot find dir : " + dir);
+        log.error("Cannot find dir : " + dir);
         return;
     }
     try {
@@ -46,7 +47,7 @@ function execCmd(cmd, dir) {
         }
     }
     catch (ex) {
-        log_1.default.error(ex.message);
+        log.error(ex.message);
     }
     return null;
 }
@@ -60,7 +61,7 @@ class VSTask {
     }
     build() {
         let projectPath = path.dirname(this.projectFile);
-        log_1.default.debug("[Build] " + this.projectFile);
+        log.debug("[Build] " + this.projectFile);
         //xbuild "/Users/larlf/Documents/project/war/dev1/server/cs/Server.sln" /t:ChatServer /p:Configurtion=Debug
         let cmdList = [os.platform() == "win32" ? "msbuild.exe" : "msbuild"];
         cmdList.push("\"" + this.projectFile + "\"");
@@ -74,7 +75,7 @@ class VSTask {
             cmdList.push("\/property:" + pKey + "=" + this.properties[pKey]);
         }
         let cmd = cmdList.join(" ");
-        log_1.default.debug(cmd);
+        log.debug(cmd);
         try {
             child_process.execSync(cmd, {
                 cwd: projectPath,
@@ -82,7 +83,7 @@ class VSTask {
             });
         }
         catch (e) {
-            log_1.default.error(e.message);
+            log.error(e.message);
             return false;
         }
         return true;
@@ -121,7 +122,7 @@ class UnityTask {
         if (this.buildTarget)
             cmdList.push("-buildTarget " + this.buildTarget);
         let cmd = cmdList.join(" ");
-        log_1.default.debug("[Build] " + cmd);
+        log.debug("[Build] " + cmd);
         try {
             let text = child_process.execSync(cmd, {
                 cwd: this.projectPath,
@@ -129,7 +130,7 @@ class UnityTask {
             });
         }
         catch (e) {
-            log_1.default.error("Unity Error : " + e.message);
+            log.error("Unity Error : " + e.message);
             //出错时处理一下Log文件
             let logfilename = path.resolve(this.projectPath, "out.log");
             if (fs.existsSync(logfilename)) {
@@ -137,7 +138,7 @@ class UnityTask {
                 for (let index in lines) {
                     let line = lines[index].trim();
                     if (line.toLowerCase().indexOf("error") >= 0) {
-                        log_1.default.info(line);
+                        log.info(line);
                     }
                 }
             }
