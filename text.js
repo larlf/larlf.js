@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
-const iconv_lite = require("iconv-lite");
 const log_1 = require("./log");
 function format(str, ...argv) {
     for (let i = 0; i < argv.length; ++i) {
@@ -10,6 +9,7 @@ function format(str, ...argv) {
     }
     return str;
 }
+exports.format = format;
 function templet(str, values) {
     for (let key in values) {
         let reg = new RegExp("\\{" + (key) + "\\}", "g");
@@ -17,6 +17,7 @@ function templet(str, values) {
     }
     return str;
 }
+exports.templet = templet;
 //替换文件中的一块内容
 function replaceBlock(text, startReg, endReg, data, indent) {
     let lines = text.split("\n");
@@ -60,6 +61,7 @@ function replaceBlock(text, startReg, endReg, data, indent) {
         log_1.default.error("Cannot find replace block : (" + startLine + "," + endLine + ") with rules : " + startReg + "," + endReg);
     return lines.join("\n");
 }
+exports.replaceBlock = replaceBlock;
 ;
 /**
  * 替换文件中的文本块
@@ -83,21 +85,4 @@ function replaceFileBlock(filename, key, data, indent, notRewrite) {
     }
     return text;
 }
-/**
- * GBK转码成UTF8
- * 通常需要传进来Buffer才行，因为String已经被处理过了
- */
-function gbk2utf8(str) {
-    if (str) {
-        str = iconv_lite.decode(str, "GBK");
-    }
-    return str;
-}
-;
-exports.default = {
-    format,
-    templet,
-    replaceBlock,
-    replaceFileBlock,
-    gbk2utf8
-};
+exports.replaceFileBlock = replaceFileBlock;

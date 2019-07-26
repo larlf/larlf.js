@@ -1,14 +1,11 @@
 import * as fs from "fs";
-import * as iconv_lite from "iconv-lite";
-import * as os from "os";
 import * as path from "path";
 import * as glob from "glob";
 import * as fs_extra from "fs-extra";
 import log from "./log";
-import { fstatSync } from "fs-extra";
 
 //复制文件
-function copyFile(srcFile: string, dstFile: string): boolean
+export function copyFile(srcFile: string, dstFile: string): boolean
 {
 	if (!fs.existsSync(srcFile))
 	{
@@ -62,7 +59,7 @@ function copyFile(srcFile: string, dstFile: string): boolean
  * @param dstPath 目标目录
  * @param callback 复制成功后的回调
  */
-function copyFiles(srcPath: string, filename: string, dstPath: string, callback?: (src: string, dest?: string) => void): number
+export function copyFiles(srcPath: string, filename: string, dstPath: string, callback?: (src: string, dest?: string) => void): number
 {
 	let count = 0;
 
@@ -78,7 +75,7 @@ function copyFiles(srcPath: string, filename: string, dstPath: string, callback?
 				count++;
 
 				//复制成功后的回调
-				if(callback)
+				if (callback)
 					callback(srcFile, dstFile);
 			}
 		}
@@ -92,7 +89,7 @@ function copyFiles(srcPath: string, filename: string, dstPath: string, callback?
  * @param srcPath 源目录
  * @param dstPath 目标目录
  */
-function copyPath(srcPath: string, dstPath: string, filter?: (src: string, dest?: string) => boolean): number
+export function copyPath(srcPath: string, dstPath: string, filter?: (src: string, dest?: string) => boolean): number
 {
 	let count = 0;
 
@@ -118,7 +115,7 @@ function copyPath(srcPath: string, dstPath: string, filter?: (src: string, dest?
 }
 
 //删除一组文件
-function deleteFiles(srcPath: string, filename: string, filter?: Function): number
+export function deleteFiles(srcPath: string, filename: string, filter?: Function): number
 {
 	let count = 0;
 
@@ -143,10 +140,45 @@ function deleteFiles(srcPath: string, filename: string, filter?: Function): numb
 	return count;
 }
 
-export default
+/**
+ * 用于处理由文本行组成的文件
+ */
+export class LinesFile
+{
+	filename: string;
+
+	lines: string[];
+
+	public get text(): string { return this.lines.join("\n"); }
+
+	public constructor(filename: string)
 	{
-		copyFile,
-		copyFiles,
-		copyPath,
-		deleteFiles
+		this.filename = filename;
+
+		//读取文件
+		if (fs.existsSync(filename))
+		{
+			log.debug("Load lines file : " + filename);
+			this.lines = fs.readFileSync(filename).toString().split("\n");
+		}
+		else
+			this.lines = [];
 	}
+
+	/**
+	 * 查找并替换一行
+	 * @param reg 
+	 * @param callback 
+	 */
+	public findAndReplaceLine(reg: RegExp, callback: (string, RegExpMatchArray) => string)
+	{
+		for (let i = 0; i < this.lines.length; ++i)
+		{
+			let r: RegExpMatchArray = this.lines[i].match(reg);
+			if (r && r.length && callback)
+			{
+				this.lines[i] = callback(this.lines[i], r);
+			}
+		}
+	}
+}

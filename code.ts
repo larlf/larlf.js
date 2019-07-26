@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import log from "./log";
-import text from "./text";
+import * as text from "./text";
 import * as SourceMapSupport from 'source-map-support';
 import Log from './log';
 import * as crc from 'crc';

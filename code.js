@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const log_1 = require("./log");
-const text_1 = require("./text");
+const text = require("./text");
 const SourceMapSupport = require("source-map-support");
 const log_2 = require("./log");
 const crc = require("crc");
@@ -60,11 +60,11 @@ class OPValue {
         this.comment = comment;
     }
     toCSConstCode() {
-        return text_1.default.format("public const int {0} = {1};", this.name, this.value + "");
+        return text.format("public const int {0} = {1};", this.name, this.value + "");
     }
     toCSInitCode() {
         //OP.Values[1] = "name";
-        return text_1.default.format("OP.Values[{0}] = \"{1}\";", this.value + "", this.name);
+        return text.format("OP.Values[{0}] = \"{1}\";", this.value + "", this.name);
     }
 }
 //___________________________________________________________________________

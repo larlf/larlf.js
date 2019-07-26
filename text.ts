@@ -1,8 +1,7 @@
 import * as fs from "fs";
-import * as iconv_lite from "iconv-lite";
 import log from "./log";
 
-function format(str: string, ...argv: string[]): string
+export function format(str: string, ...argv: string[]): string
 {
 	for (let i = 0; i < argv.length; ++i)
 	{
@@ -13,7 +12,7 @@ function format(str: string, ...argv: string[]): string
 	return str;
 }
 
-function templet(str: string, values: { [key: string]: string }): string
+export function templet(str: string, values: { [key: string]: string }): string
 {
 	for (let key in values)
 	{
@@ -25,7 +24,7 @@ function templet(str: string, values: { [key: string]: string }): string
 }
 
 //替换文件中的一块内容
-function replaceBlock(text: string, startReg: RegExp, endReg: RegExp, data: string | string[], indent?: string): string
+export function replaceBlock(text: string, startReg: RegExp, endReg: RegExp, data: string | string[], indent?: string): string
 {
 	let lines = text.split("\n");
 	let startLine = -1;
@@ -88,7 +87,7 @@ function replaceBlock(text: string, startReg: RegExp, endReg: RegExp, data: stri
  * @param indent 缩进，为null的时候自动处理
  * @param notRewrite 不重写文件，只是把结果返回
  */
-function replaceFileBlock(filename: string, key: string, data: string | string[], indent?: string, notRewrite?: boolean): string
+export function replaceFileBlock(filename: string, key: string, data: string | string[], indent?: string, notRewrite?: boolean): string
 {
 	if (!fs.existsSync(filename))
 	{
@@ -108,25 +107,3 @@ function replaceFileBlock(filename: string, key: string, data: string | string[]
 
 	return text;
 }
-
-/**
- * GBK转码成UTF8
- * 通常需要传进来Buffer才行，因为String已经被处理过了
- */
-function gbk2utf8(str: string | Buffer): string | Buffer
-{
-	if (str)
-	{
-		str = iconv_lite.decode(str as Buffer, "GBK");
-	}
-
-	return str;
-};
-
-export default {
-	format,
-	templet,
-	replaceBlock,
-	replaceFileBlock,
-	gbk2utf8
-};

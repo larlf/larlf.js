@@ -42,6 +42,7 @@ function copyFile(srcFile, dstFile) {
             fs_extra.mkdirsSync(dstFile);
     }
 }
+exports.copyFile = copyFile;
 /**
  * 复制多个文件到目标
  * @param srcPath 源的目录
@@ -66,6 +67,7 @@ function copyFiles(srcPath, filename, dstPath, callback) {
     }
     return count;
 }
+exports.copyFiles = copyFiles;
 /**
  * 复制目录
  * @param srcPath 源目录
@@ -87,6 +89,7 @@ function copyPath(srcPath, dstPath, filter) {
     }
     return count;
 }
+exports.copyPath = copyPath;
 //删除一组文件
 function deleteFiles(srcPath, filename, filter) {
     let count = 0;
@@ -104,9 +107,34 @@ function deleteFiles(srcPath, filename, filter) {
     }
     return count;
 }
-exports.default = {
-    copyFile,
-    copyFiles,
-    copyPath,
-    deleteFiles
-};
+exports.deleteFiles = deleteFiles;
+/**
+ * 用于处理由文本行组成的文件
+ */
+class LinesFile {
+    get text() { return this.lines.join("\n"); }
+    constructor(filename) {
+        this.filename = filename;
+        //读取文件
+        if (fs.existsSync(filename)) {
+            log_1.default.debug("Load lines file : " + filename);
+            this.lines = fs.readFileSync(filename).toString().split("\n");
+        }
+        else
+            this.lines = [];
+    }
+    /**
+     * 查找并替换一行
+     * @param reg
+     * @param callback
+     */
+    findAndReplaceLine(reg, callback) {
+        for (let i = 0; i < this.lines.length; ++i) {
+            let r = this.lines[i].match(reg);
+            if (r && r.length && callback) {
+                this.lines[i] = callback(this.lines[i], r);
+            }
+        }
+    }
+}
+exports.LinesFile = LinesFile;
