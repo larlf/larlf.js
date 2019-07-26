@@ -1,6 +1,6 @@
 {
   "name": "larlf",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Larlf's JavaScript lib",
   "main": "index.js",
   "scripts": {
