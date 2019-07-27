@@ -148,13 +148,39 @@ class LinesFile {
      * @param reg
      * @param startLine
      */
-    findLine(reg, startLine) {
+    findLine(reg, startLine, rule) {
         if (!startLine)
             startLine = 0;
         for (let i = startLine; i < this.lines.length; ++i) {
             let r = this.lines[i].match(reg);
             if (r && r.length) {
-                return i;
+                if (rule) {
+                    if (rule(this.lines[i]))
+                        return i;
+                }
+                else
+                    return i;
+            }
+        }
+        return -1;
+    }
+    /**
+     * 反向查找一行
+     * @param reg
+     * @param startLine
+     */
+    findListLine(reg, startLine, rule) {
+        if (!startLine || startLine < 0)
+            startLine = this.lines.length - 1;
+        for (let i = startLine; i >= 0; --i) {
+            let r = this.lines[i].match(reg);
+            if (r && r.length) {
+                if (rule) {
+                    if (rule(this.lines[i]))
+                        return i;
+                }
+                else
+                    return i;
             }
         }
         return -1;
