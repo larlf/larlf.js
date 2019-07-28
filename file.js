@@ -165,6 +165,24 @@ class LinesFile {
         return -1;
     }
     /**
+     * 查找多个条件指向的目标行
+     * @param regs
+     */
+    findTargetLine(regs, startLine) {
+        let regIndex = 0;
+        if (!startLine)
+            startLine = 0;
+        for (let i = startLine; i < this.lines.length; ++i) {
+            let r = this.lines[i].match(regs[regIndex]);
+            if (r && r.length) {
+                regIndex++;
+                if (regIndex >= regs.length)
+                    return i;
+            }
+        }
+        return -1;
+    }
+    /**
      * 反向查找一行
      * @param reg
      * @param startLine

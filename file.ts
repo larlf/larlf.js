@@ -217,6 +217,28 @@ export class LinesFile
 	}
 
 	/**
+	 * 查找多个条件指向的目标行
+	 * @param regs 
+	 */
+	public findTargetLine(regs: RegExp[], startLine?: number): number
+	{
+		let regIndex = 0;
+		if (!startLine) startLine = 0;
+		for (let i = startLine; i < this.lines.length; ++i)
+		{
+			let r: RegExpMatchArray = this.lines[i].match(regs[regIndex]);
+			if (r && r.length)
+			{
+				regIndex++;
+				if (regIndex >= regs.length)
+					return i;
+			}
+		}
+
+		return -1;
+	}
+
+	/**
 	 * 反向查找一行
 	 * @param reg 
 	 * @param startLine 

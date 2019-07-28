@@ -3,7 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const larlf_log = require("./log");
 const larlf_file = require("./file");
 let log = larlf_log.Logger;
-test1();
+test2();
+function test2() {
+    let filename = "D:/project/fish/dev/client/native/android/fish_hunter/android_studio/app/build.gradle";
+    let file = new larlf_file.LinesFile(filename);
+    log.debug(file.text);
+    let pos = file.findTargetLine([/android\s\{/, /ndk\s\{/, /^\s*\}\s*$/]);
+    log.debug(pos);
+}
 function test1() {
     let filename = "D:/project/games/fish/trunk/dev/client/native/android/fish_hunter/android_studio/app/build.gradle.bak";
     let file = new larlf_file.LinesFile(filename);
