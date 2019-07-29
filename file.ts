@@ -116,7 +116,9 @@ export function copyPath(srcPath: string, dstPath: string, filter?: (src: string
 	return count;
 }
 
-//删除一组文件
+/**
+ * 删除一组文件
+ */
 export function deleteFiles(srcPath: string, filename: string, filter?: Function): number
 {
 	let count = 0;
@@ -141,6 +143,39 @@ export function deleteFiles(srcPath: string, filename: string, filter?: Function
 
 	return count;
 }
+
+/**
+ * 一直重试，直到删除
+ * @param path 
+ * @param retryTime 
+ */
+export function blockRemove(path: string, retryTime?: number)
+{
+	if (!retryTime) retryTime = 1000;
+	let _t = new Date().getTime() + retryTime;
+
+	while (fs.existsSync(path))
+	{
+		let now = new Date().getTime();
+		if (now >= _t)
+		{
+			_t = now + retryTime;
+			try
+			{
+				log.debug("Remove : " + path);
+				fs_extra.removeSync(path);
+				if (!fs.existsSync(path))
+					break;
+			}
+			catch (ex)
+			{
+				log.error("Remove " + path + " error : " + ex);
+			}
+		}
+	}
+}
+
+//_______________________________________________________________________________________
 
 /**
  * 用于处理由文本行组成的文件

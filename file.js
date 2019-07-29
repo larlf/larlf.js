@@ -91,7 +91,9 @@ function copyPath(srcPath, dstPath, filter) {
     return count;
 }
 exports.copyPath = copyPath;
-//删除一组文件
+/**
+ * 删除一组文件
+ */
 function deleteFiles(srcPath, filename, filter) {
     let count = 0;
     let srcFiles = glob.sync(path.resolve(srcPath, filename));
@@ -109,6 +111,33 @@ function deleteFiles(srcPath, filename, filter) {
     return count;
 }
 exports.deleteFiles = deleteFiles;
+/**
+ * 一直重试，直到删除
+ * @param path
+ * @param retryTime
+ */
+function blockRemove(path, retryTime) {
+    if (!retryTime)
+        retryTime = 1000;
+    let _t = new Date().getTime() + retryTime;
+    while (fs.existsSync(path)) {
+        let now = new Date().getTime();
+        if (now >= _t) {
+            _t = now + retryTime;
+            try {
+                log.debug("Remove : " + path);
+                fs_extra.removeSync(path);
+                if (!fs.existsSync(path))
+                    break;
+            }
+            catch (ex) {
+                log.error("Remove " + path + " error : " + ex);
+            }
+        }
+    }
+}
+exports.blockRemove = blockRemove;
+//_______________________________________________________________________________________
 /**
  * 用于处理由文本行组成的文件
  */

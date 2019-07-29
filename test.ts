@@ -3,7 +3,12 @@ import * as larlf_file from './file';
 
 let log = larlf_log.Logger;
 
-test2();
+test3();
+
+function test3()
+{
+	larlf_file.blockRemove("d:/temp/testPath");
+}
 
 function test2()
 {
