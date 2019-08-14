@@ -19,7 +19,32 @@ function templet(str, values) {
     return str;
 }
 exports.templet = templet;
-//替换文件中的一块内容
+/**
+ * 替换指定的值
+ * @param text
+ * @param reg
+ * @param value
+ */
+function replaceValue(name, text, reg, value) {
+    let r = reg.exec(text);
+    if (!r) {
+        log.error("Cannot find text : " + reg + " in " + name);
+        return text;
+    }
+    let toStr = value;
+    if (r.length > 2) {
+        toStr = r[1] + value;
+        if (r.length > 3)
+            toStr += r[3];
+    }
+    log.debug("[Replace] " + name + "\nFrom : " + r[0] + "\n To  : " + toStr);
+    text = text.replace(r[0], toStr);
+    return text;
+}
+exports.replaceValue = replaceValue;
+/**
+ * 替换文件中的一块内容
+ */
 function replaceBlock(text, startReg, endReg, data, indent) {
     let lines = text.split("\n");
     let startLine = -1;

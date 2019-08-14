@@ -1,9 +1,21 @@
 import * as larlf_log from './log';
 import * as larlf_file from './file';
+import * as larlf_text from './text';
+import * as fs from 'fs';
 
 let log = larlf_log.Logger;
 
-test3();
+test4();
+
+function test4()
+{
+	let filename = "d:/temp/web.xml";
+	let text = fs.readFileSync(filename).toString();
+	text = larlf_text.replaceValue(filename, text, /(\<welcome\-file123\>)(.*)(\<\/welcome\-file\>)/g, "abc.htm");
+	text = larlf_text.replaceValue(filename, text, /index/g, "abc.htm");
+	text = larlf_text.replaceValue(filename, text, /(\<welcome\-file\>)(.*)(\<\/welcome\-file\>)/g, "abc.htm");
+	//log.debug(text);
+}
 
 function test3()
 {

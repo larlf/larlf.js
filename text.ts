@@ -25,7 +25,37 @@ export function templet(str: string, values: { [key: string]: string }): string
 	return str;
 }
 
-//替换文件中的一块内容
+/**
+ * 替换指定的值
+ * @param text 
+ * @param reg 
+ * @param value 
+ */
+export function replaceValue(name: string, text: string, reg: RegExp, value: string): string
+{
+	let r = reg.exec(text);
+	if (!r)
+	{
+		log.error("Cannot find text : " + reg + " in " + name);
+		return text;
+	}
+
+	let toStr = value;
+	if (r.length > 2)
+	{
+		toStr = r[1] + value;
+		if (r.length > 3)
+			toStr += r[3];
+	}
+
+	log.debug("[Replace] " + name + "\nFrom : " + r[0] + "\n To  : " + toStr);
+	text = text.replace(r[0], toStr);
+	return text;
+}
+
+/**
+ * 替换文件中的一块内容
+ */
 export function replaceBlock(text: string, startReg: RegExp, endReg: RegExp, data: string | string[], indent?: string): string
 {
 	let lines = text.split("\n");
