@@ -252,6 +252,32 @@ export class LinesFile
 	}
 
 	/**
+	 * 从后向前找一行
+	 * @param reg 
+	 * @param startLine 
+	 * @param rule 
+	 */
+	public findLastLine(reg: RegExp, startLine?: number, rule?: (line: string) => boolean): number
+	{
+		if (!startLine) startLine = this.lines.length - 1;
+		for (let i = startLine; i >= 0; --i)
+		{
+			let r: RegExpMatchArray = this.lines[i].match(reg);
+			if (r && r.length)
+			{
+				if (rule)
+				{
+					if (rule(this.lines[i]))
+						return i;
+				}
+				else
+					return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
 	 * 查找多个条件指向的目标行
 	 * @param regs 
 	 */
