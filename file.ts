@@ -373,6 +373,17 @@ export class LinesFile
 	}
 
 	/**
+	 * 删除一部分内容
+	 * @param start 
+	 * @param count 
+	 */
+	public remove(start: number, count: number)
+	{
+		log.debug("Remove " + count + " lines from line " + (start + 1) + " in " + this.filename);
+		this.lines.splice(start, count);
+	}
+
+	/**
 	 * 保存
 	 */
 	public save(filename?: string)

@@ -292,6 +292,15 @@ class LinesFile {
         this.insertBefore(start, str);
     }
     /**
+     * 删除一部分内容
+     * @param start
+     * @param count
+     */
+    remove(start, count) {
+        log.debug("Remove " + count + " lines from line " + (start + 1) + " in " + this.filename);
+        this.lines.splice(start, count);
+    }
+    /**
      * 保存
      */
     save(filename) {
