@@ -384,6 +384,15 @@ export class LinesFile
 	}
 
 	/**
+	 * 添加一行
+	 * @param str 
+	 */
+	public append(str: string)
+	{
+		this.lines.push(str);
+	}
+
+	/**
 	 * 保存
 	 */
 	public save(filename?: string)

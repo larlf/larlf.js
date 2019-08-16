@@ -301,6 +301,13 @@ class LinesFile {
         this.lines.splice(start, count);
     }
     /**
+     * 添加一行
+     * @param str
+     */
+    append(str) {
+        this.lines.push(str);
+    }
+    /**
      * 保存
      */
     save(filename) {
