@@ -292,6 +292,27 @@ class LinesFile {
         this.insertBefore(start, str);
     }
     /**
+     * 替换行中的文字
+     * @param reg
+     * @param value
+     */
+    replaceValue(reg, value) {
+        for (let i = 0; i < this.lines.length; ++i) {
+            let text = this.lines[i];
+            let r = reg.exec(text);
+            if (r) {
+                let toStr = value;
+                if (r.length > 2) {
+                    toStr = r[1] + value;
+                    if (r.length > 3)
+                        toStr += r[3];
+                }
+                log.debug("Replace " + this.filename + " Line:" + (i + 1) + "\nFrom : " + r[0] + "\n To  : " + toStr);
+                this.lines[i] = text.replace(r[0], toStr);
+            }
+        }
+    }
+    /**
      * 删除一部分内容
      * @param start
      * @param count
