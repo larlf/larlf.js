@@ -280,6 +280,18 @@ class LinesFile {
             this.lines.splice(n + i, 0, strs[i]);
         }
     }
+    insertAfterLine(reg, str, startLine) {
+        let pos = this.findLine(reg, startLine);
+        if (pos < 0)
+            return log.error("Cannot find " + reg + " in " + this.filename);
+        this.insertAfter(pos, str);
+    }
+    insertBeforeLine(reg, str, startLine) {
+        let pos = this.findLine(reg, startLine);
+        if (pos < 0)
+            return log.error("Cannot find " + reg + " in " + this.filename);
+        this.insertBefore(pos, str);
+    }
     /**
      * 替换一部分内容
      * @param start

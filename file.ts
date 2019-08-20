@@ -358,6 +358,24 @@ export class LinesFile
 		}
 	}
 
+	public insertAfterLine(reg: RegExp, str: string, startLine?: number)
+	{
+		let pos = this.findLine(reg, startLine);
+		if (pos < 0)
+			return log.error("Cannot find " + reg + " in " + this.filename);
+
+		this.insertAfter(pos, str);
+	}
+
+	public insertBeforeLine(reg: RegExp, str: string, startLine?: number)
+	{
+		let pos = this.findLine(reg, startLine);
+		if (pos < 0)
+			return log.error("Cannot find " + reg + " in " + this.filename);
+
+		this.insertBefore(pos, str);
+	}
+
 	/**
 	 * 替换一部分内容
 	 * @param start 
