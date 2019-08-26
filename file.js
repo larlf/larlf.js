@@ -234,6 +234,25 @@ class LinesFile {
         return -1;
     }
     /**
+     * 从后向前查找多个条件指向的目标行
+     * @param regs
+     * @param startLine
+     */
+    findLastTargetLine(regs, startLine) {
+        let regIndex = 0;
+        if (!startLine)
+            startLine = this.lines.length - 1;
+        for (let i = startLine; i >= 0; ++i) {
+            let r = this.lines[i].match(regs[regIndex]);
+            if (r && r.length) {
+                regIndex++;
+                if (regIndex >= regs.length)
+                    return i;
+            }
+        }
+        return -1;
+    }
+    /**
      * 反向查找一行
      * @param reg
      * @param startLine
